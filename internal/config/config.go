@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	cfg Config
+	conf Config
 )
 
 // Config system config
@@ -15,29 +15,29 @@ type Config struct {
 	DB  DB  `envPrefix:"DB_"`
 }
 
-// Get return cfg instance
+// Get return conf instance
 func Get() Config {
-	return cfg
+	return conf
 }
 
 // Load load env
 func Load() (Config, error) {
-	if err := env.Parse(&cfg); err != nil {
-		return cfg, nil
+	if err := env.Parse(&conf); err != nil {
+		return conf, nil
 	}
-	if err := cfg.Validate(); err != nil {
-		return cfg, nil
+	if err := conf.Validate(); err != nil {
+		return conf, nil
 	}
 
-	return cfg, nil
+	return conf, nil
 }
 
 // Validate validate
-func (cfg Config) Validate() error {
-	if err := cfg.DB.Validate(); err != nil {
+func (conf Config) Validate() error {
+	if err := conf.DB.Validate(); err != nil {
 		return err
 	}
-	if err := cfg.App.Validate(); err != nil {
+	if err := conf.App.Validate(); err != nil {
 		return err
 	}
 
