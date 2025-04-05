@@ -1,0 +1,9 @@
+root = "."
+
+[build]
+cmd = "go build -o ./tmp/main ./cmd"
+bin = "./tmp/main"
+
+[watcher]
+include = ["."]
+exclude = ["tmp", "vendor", ".git", ".idea", ".vscode"]

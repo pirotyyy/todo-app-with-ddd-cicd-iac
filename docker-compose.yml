@@ -1,0 +1,33 @@
+services:
+  app:
+    container_name: todo_app
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: build/Dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/app
+    environment:
+      DB_HOST: db
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: todo_db
+
+  db:
+    container_name: todo_db
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: todo
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - todo_db_data:/var/lib/mysql
+
+volumes:
+  todo_db_data:
