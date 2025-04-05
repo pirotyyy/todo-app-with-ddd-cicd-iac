@@ -1,5 +1,7 @@
 DOCKER_COMPOSE := docker compose
 
+setup:
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b ./bin v2.0.2
 up:
 	$(DOCKER_COMPOSE) up -d
 down:
@@ -7,4 +9,4 @@ down:
 build:
 	$(DOCKER_COMPOSE) build --no-cache
 lint:
-	go tool golangci-lint run ./...
+	./bin/golangci-lint run ./...
