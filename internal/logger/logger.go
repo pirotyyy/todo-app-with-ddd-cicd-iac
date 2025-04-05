@@ -1,21 +1,31 @@
 package logger
 
 import (
+	"context"
 	"log/slog"
 	"os"
+	"runtime"
+	"time"
 
 	"github.com/pirotyyy/todo-app-with-ddd-cicd-iac/internal/config"
 )
 
-var l *slog.Logger
+const (
+	skipCount = 3
+)
 
-func InitLogger(confLog *config.Log) {
+type Handler struct {
+	slog.Handler
+}
+
+func NewHandler(confLog *config.Log) *Handler {
 	opts := &slog.HandlerOptions{
 		Level: slogLevel(confLog.Level),
 	}
-	handler := slog.NewJSONHandler(os.Stdout, opts)
 
-	l = slog.New(handler)
+	return &Handler{
+		Handler: slog.NewJSONHandler(os.Stdout, opts),
+	}
 }
 
 func slogLevel(level string) slog.Level {
@@ -33,18 +43,33 @@ func slogLevel(level string) slog.Level {
 	}
 }
 
-func Info(msg string, keysAndValues ...any) {
-	l.Info(msg, keysAndValues...)
+func Info(ctx context.Context, msg string, args ...any) {
+	log(ctx, slog.LevelInfo, msg, args...)
 }
 
-func Debug(msg string, keysAndValues ...any) {
-	l.Debug(msg, keysAndValues...)
+func Debug(ctx context.Context, msg string, args ...any) {
+	log(ctx, slog.LevelDebug, msg, args...)
 }
 
-func Warn(msg string, keysAndValues ...any) {
-	l.Warn(msg, keysAndValues...)
+func Warn(ctx context.Context, msg string, args ...any) {
+	log(ctx, slog.LevelWarn, msg, args...)
 }
 
-func Error(msg string, keysAndValues ...any) {
-	l.Error(msg, keysAndValues...)
+func Error(ctx context.Context, msg string, args ...any) {
+	log(ctx, slog.LevelError, msg, args...)
+}
+
+func log(ctx context.Context, level slog.Level, msg string, keysAndValues ...any) {
+	logger := slog.Default()
+	if !logger.Enabled(ctx, level) {
+		return
+	}
+
+	var pcs [1]uintptr
+	runtime.Callers(skipCount, pcs[:])
+
+	r := slog.NewRecord(time.Now(), level, msg, pcs[0])
+	r.Add(keysAndValues...)
+
+	_ = logger.Handler().Handle(ctx, r)
 }
