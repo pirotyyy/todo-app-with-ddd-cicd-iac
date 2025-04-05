@@ -18,7 +18,7 @@ type Handler struct {
 	slog.Handler
 }
 
-func NewHandler(confLog *config.Log) *Handler {
+func NewHandler(confLog config.Log) *Handler {
 	opts := &slog.HandlerOptions{
 		Level: slogLevel(confLog.Level),
 	}
