@@ -14,6 +14,8 @@ import (
 func main() {
 	ctx := context.Background() // TODO: ちゃんとやる
 
+	a := "unused"
+
 	conf, err := config.Load()
 	if err != nil {
 		logger.Error(ctx, err.Error())
